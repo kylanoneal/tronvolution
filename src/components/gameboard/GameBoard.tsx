@@ -308,7 +308,6 @@ const GameBoard2: React.FC = () => {
         gridSize,
         gameStatus,
         startGame,
-        modelInitialized,
         gameSpeed,
         playerPositions,
         setShowGameGrid,

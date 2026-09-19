@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from 'react';
-import { initializeModelSession } from "../onnx-handler";
 import init, { run_engine, Move } from "../wasm/trust.js"
 
 export type Position = [number, number];
@@ -87,8 +86,7 @@ interface TronContextType {
     changePlayerDirection: (playerId: number, direction: Direction) => void;
     desiredDirections: React.MutableRefObject<{ [key: number]: Direction }>;
 
-    modelInitialized: boolean;
-    initializeModel: () => Promise<void>;
+    boardInitialized: boolean;
     initBoard: () => Promise<void>;
     calculatePlayerStartPositions: (players: Player[], gridSize: { width: number; height: number }) => Player[];
 
@@ -134,7 +132,7 @@ export const TronProvider: React.FC<TronProviderProps> = ({ children }) => {
     const setGameSpeed = (speed: number) => {
         setGameSpeedState(Math.max(STEP_THROUGH_SPEED, Math.min(MAX_GAME_SPEED, Math.round(speed))));
     };
-    const [modelInitialized, setModelInitialized] = useState(false);
+    const [boardInitialized, setBoardInitialized] = useState(false);
     const [availableControlSchemes, setAvailableControlSchemes] = useState<ControlScheme[]>([
         'yghj', 'arrows', 'ijkl', "pl;'", 'numpad', 'bot'
     ]);
@@ -168,8 +166,7 @@ export const TronProvider: React.FC<TronProviderProps> = ({ children }) => {
         setDefaultSettings();
         // Initialize WASM
         await init();
-        // Initialize onnxruntime-web model
-        await initializeModel();
+        setBoardInitialized(true);
     };
     const setDefaultSettings = () => {
         // Create an empty grid
@@ -332,19 +329,6 @@ export const TronProvider: React.FC<TronProviderProps> = ({ children }) => {
                     : player
             )
         );
-    };
-
-    const initializeModel = async () => {
-        try {
-            if (modelInitialized) {
-                return;
-            }
-            const initialized = await initializeModelSession();
-            setModelInitialized(initialized);
-        } catch (error) {
-            console.error('Failed to initialize AI model:', error);
-            setModelInitialized(false);
-        }
     };
 
     const hasPlayerMoved = (playerId: number) =>
@@ -579,8 +563,7 @@ export const TronProvider: React.FC<TronProviderProps> = ({ children }) => {
         startGame,
         resetGame,
         changePlayerDirection: changePlayerDirection,
-        modelInitialized,
-        initializeModel,
+        boardInitialized,
         availableControlSchemes,
         setAvailableControlSchemes,
         allControlSchemes,

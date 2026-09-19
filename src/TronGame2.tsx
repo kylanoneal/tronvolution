@@ -77,7 +77,7 @@ const TronGame2: React.FC<TronGame2Props> = ({directToMenu = false, directToGame
     const {
         players,
         gameStatus,
-        modelInitialized,
+        boardInitialized,
         initBoard,
         desiredDirections,
         introComplete,
@@ -101,7 +101,7 @@ const TronGame2: React.FC<TronGame2Props> = ({directToMenu = false, directToGame
                 setIntroComplete(true);
             }
 
-            if (!modelInitialized) {
+            if (!boardInitialized) {
                 initBoard();
             }
         }

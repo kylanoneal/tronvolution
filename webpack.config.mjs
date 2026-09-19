@@ -94,7 +94,4 @@ export default {
         historyApiFallback: true,
     },
     ignoreWarnings: [/Failed to parse source map/],
-    externals: {
-        'onnxruntime-node': 'onnxruntime-node'
-    },
 };
